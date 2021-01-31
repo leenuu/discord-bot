@@ -94,5 +94,5 @@ async def 관리도움(t):
 #####################################################################################################
 
 
-app.run('ODA1MDI4MjMzOTIxNDI5NTc0.YBU69w.DH7Lx-x7u1FUEhxerCeLFNfz2lA')
+app.run('')
 
