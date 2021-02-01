@@ -5,6 +5,7 @@ class bank:
     
     def __init__(self):
         print("초기 설정 완료")
+        self.log = ''
         self.data = dict()
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'money'])
 
@@ -33,7 +34,7 @@ class bank:
     def manage(self, user, money):
         if user in self.data.keys():
             print(f"{user} 한테서 {money} 추가했습니다.")
-            self.data[user] += money
+            self.data[user] += int(money)
             return 0
         
         else:
@@ -41,17 +42,17 @@ class bank:
             return 1
 
     def save(self):
-        for i in range(len(self.data)):
-            self.xlsx.cell(row=i+1, column=1).value = list(self.data.keys())[i]
-            self.xlsx.cell(row=i+1, column=2).value = self.data[list(self.data.keys())[i]]
+        for i in range(len(self.data)): 
+            self.xlsx.cell(row=i+2, column=1).value = list(self.data.keys())[i]
+            self.xlsx.cell(row=i+2, column=2).value = self.data[list(self.data.keys())[i]]
             
         self.files.save('data.xlsx')
 
     def load(self):
         num = 1
         while True:
-            if self.xlsx.cell(row=num, column=1).value != None:
-                self.data[self.xlsx.cell(row=num, column=1).value] = self.xlsx.cell(row=num, column=2).value
+            if self.xlsx.cell(row=num+1, column=1).value != None:
+                self.data[self.xlsx.cell(row=num+1, column=1).value] = self.xlsx.cell(row=num+1, column=2).value
                 num += 1
 
             else:
@@ -61,6 +62,19 @@ class bank:
     
     def cheack(self, user):
         return self.data[user]
+
+    def log_add(self, log_data):
+        self.log += log_data + '\n'
+    
+    def log_save(self):
+        with open("log.txt", "r") as f:
+            _log = f.read()
+            self.log = _log + self.log
+
+        with open("log.txt", "w") as f:
+            f.write(self.log)
+
+
 
 # bot = bank()
 # bot.add_user('야스')
