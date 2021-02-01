@@ -129,5 +129,5 @@ async def 관리도움(t):
 
 
 
-app.run('ODA1MDI4MjMzOTIxNDI5NTc0.YBU69w.c6zQyOi5qJ6YnXfNAwCCmsQboV8')
+app.run('')
 
