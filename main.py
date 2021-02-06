@@ -7,6 +7,7 @@ class bank:
         print("초기 설정 완료")
         self.log = ''
         self.data = dict()
+        self.price = {1 : 1000, 2 : 800, 3 : 600, 4 : 550, 5 : 500, 6 : 400, 7 : 350, 8 : 300, 9 : 100, 10 : 50}
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'money'])
 
         try:    
@@ -28,13 +29,13 @@ class bank:
 
         else:
             print(f"{user} 추가 성공")
-            self.data[user] = 0
+            self.data[user] = [0, 0]
             return 0
 
     def manage(self, user, money):
         if user in self.data.keys():
             print(f"{user} 한테서 {money} 추가했습니다.")
-            self.data[user] += int(money)
+            self.data[user][0] += int(money)
             return 0
         
         else:
@@ -44,7 +45,8 @@ class bank:
     def save(self):
         for i in range(len(self.data)): 
             self.xlsx.cell(row=i+2, column=1).value = list(self.data.keys())[i]
-            self.xlsx.cell(row=i+2, column=2).value = self.data[list(self.data.keys())[i]]
+            self.xlsx.cell(row=i+2, column=2).value = self.data[list(self.data.keys())[i]][0]
+            self.xlsx.cell(row=i+2, column=3).value = self.data[list(self.data.keys())[i]][1]
             
         self.files.save('data.xlsx')
 
@@ -52,7 +54,7 @@ class bank:
         num = 1
         while True:
             if self.xlsx.cell(row=num+1, column=1).value != None:
-                self.data[self.xlsx.cell(row=num+1, column=1).value] = self.xlsx.cell(row=num+1, column=2).value
+                self.data[self.xlsx.cell(row=num+1, column=1).value] = [self.xlsx.cell(row=num+1, column=2).value, self.xlsx.cell(row=num+1, column=3).value]
                 num += 1
 
             else:
@@ -60,8 +62,18 @@ class bank:
             
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'money'])
     
+    def buy(self, user_id, item):
+        if self.data[user_id][0] < self.price[item]:
+            return 1  
+
+        elif self.data[user_id][0] >= self.price[item]:
+            if item == 1:
+                self.data[user_id][1] += 1
+            self.data[user_id][0] -= self.price[item]
+            return 0
+
     def cheack(self, user):
-        return self.data[user]
+        return self.data[user][0]
 
     def log_add(self, log_data):
         self.log += log_data + '\n'
