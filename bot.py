@@ -112,6 +112,35 @@ async def 구매(message):
 #####################################################################################################
 
 @app.command() 
+async def 출책(message):
+    name = f'<@!{message.author.id}>'
+    channel = message.channel
+    ch = bot.attend(name)
+    if ch == 0:
+        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다.')
+        print(f'<@!{message.author.id}> 출석')
+        await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다.') 
+
+    elif ch == 2:
+        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다. 5코인 추가 되었습니다.')
+        print(f'<@!{message.author.id}> 출석')
+        await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다. 5코인 추가 되었습니다.') 
+    
+    elif ch == 1:
+        print('이미 출석했습니다.')
+        await channel.send(f'{name}님 이미출석했습니다.') 
+
+#####################################################################################################
+
+@app.command() 
+async def 출책확인(message):
+    name = f'<@!{message.author.id}>'
+    channel = message.channel
+    await channel.send(f'<@!{message.author.id}> 님 출석횟수는 {bot.data[name][3]} 입니다.') 
+
+#####################################################################################################
+
+@app.command() 
 async def test(message):
     print(f'<@!{message.author.id}>')
     channel = message.channel
@@ -141,6 +170,8 @@ async def 상점품목(t):
 @commands.has_any_role("은행원" , "은행 고객원")
 async def 도움(t):
     embed = discord.Embed(title="덕후 은행", description="디스코드 덕후 코인봇 입니다.", color=0x62c1cc)
+    embed.add_field(name=">출책 ", value="출석 채크를 합니다.", inline=False)
+    embed.add_field(name=">출책확인 ", value="출석 채크한 횟수를 보여줌니다.", inline=False)
     embed.add_field(name=">만들기 ", value="덕후 코인을 할당받는 계좌를 만듬니다.", inline=False)
     embed.add_field(name=">코인확인 ", value="유저의 현제 소지하는 덕후 코인을 확인합니다.", inline=False)
     await t.send(embed=embed)
