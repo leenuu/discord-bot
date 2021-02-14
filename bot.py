@@ -3,7 +3,7 @@ from datetime import datetime
 from main import bank
 from discord.ext import commands 
 
-app = commands.Bot(command_prefix='>') 
+app = commands.Bot(command_prefix='!!') 
 bot = bank()
 items = dict()
 items = { 1 : '경고 1회 차감권', 2 : '[고인물](칭호)', 3 : '[흑우](칭호)', 4 : '[대마법사](칭호)', 5 : '[RMT],[EMT],[PMT](칭호, 택1)', 6 : '[쇼타콘],[로리콘],[중2병](칭호, 택1)', 7 : '[얀데레].[츤데레],[도짓코](칭호, 택1)', 8 : '[페이몬],[혐],[비밀친구](칭호, 택1)', 9 : '[뉴비](칭호)', 10 : '[덕후](칭호)'}
@@ -16,8 +16,28 @@ async def on_ready():
     await app.change_presence(status=discord.Status.online, activity=None) 
     print("ready")
 
+
 #####################################################################################################
 
+@app.event 
+async def on_message(message): 
+    await app.process_commands(message)
+    if message.author == app.user:
+        return
+
+    msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : {message.content}' + '\n'
+    bot.channel_log_add(str(message.channel) ,msg)
+    # print(msg)
+
+#####################################################################################################
+
+@app.command() 
+@commands.has_role("은행원")
+async def 이름확인(message): 
+    name = f'<@!{message.author.id}>'
+    await message.channel.send(name)
+
+#####################################################################################################
 @app.command() 
 @commands.has_role("은행원")
 async def 관리(t, *, name_money): 
@@ -60,6 +80,8 @@ async def 저장(t):
     await t.send('데이터 저장 완료!')
     bot.log_save()
     await t.send('로그 저장 완료!')
+    bot.channel_log_save()
+    await t.send('채널 로그 저장 완료!')
 
 @저장.error
 async def 저장_error(t, err):
@@ -154,7 +176,7 @@ async def 상점품목(t):
     embed = discord.Embed(title="덕후 은행 상점", description="덕후 코인으로 살수 있는 품목 입니다.", color=0x62c1cc)
     embed.add_field(name=">1 경고 1회 차감권 ", value="1000 코인", inline=True)
     embed.add_field(name=">2 [고인물](칭호)", value="800 코인", inline=True)
-    embed.add_field(name=">3 [흑우](칭호)", value="600 코안", inline=True)
+    embed.add_field(name=">3 [흑우](칭호)", value="600 코인", inline=True)
     embed.add_field(name=">4 [대마법사](칭호) ", value="550 코인", inline=True)
     embed.add_field(name=">5 [RMT],[EMT],[PMT](칭호, 택1)", value="500 코인", inline=True)
     embed.add_field(name=">6 [쇼타콘],[로리콘],[중2병](칭호, 택1)", value="400 코인", inline=True)
