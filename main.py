@@ -7,10 +7,11 @@ class bank:
     def __init__(self):
         print("초기 설정 완료")
         self.log = ''
+        self.channel_log = dict()
         self.data = dict()
         self.price = {1 : 1000, 2 : 800, 3 : 600, 4 : 550, 5 : 500, 6 : 400, 7 : 350, 8 : 300, 9 : 100, 10 : 50}
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
-
+        
         try:    
             self.files = openpyxl.load_workbook('data.xlsx')
             self.xlsx = self.files.active
@@ -118,17 +119,41 @@ class bank:
         self.log += log_data + '\n'
     
     def log_save(self):
-        with open("log.txt", "r") as f:
-            _log = f.read()
-            self.log = _log + self.log
+        try: 
+            with open("log.txt", 'r'):
+                _log = f.read()
+                self.log = _log + self.log
+            
+            with open("log.txt", "w") as f:
+                f.write(self.log)
+                
+        except FileNotFoundError:
+            with open("log.txt", 'w'):
+                pass
 
-        with open("log.txt", "w") as f:
-            f.write(self.log)
+    def channel_log_add(self, ch, msg):
 
+        try:
+            self.channel_log[ch] += msg 
+            
+        except KeyError:
+            self.channel_log[ch] = msg
+
+
+    def channel_log_save(self):
+        for ch in self.channel_log.keys():
+            try: 
+                with open(f'{ch}.txt', 'a') as f:
+                    f.write(self.channel_log[ch])
+            
+            except FileNotFoundError:
+                with open(f'{ch}.txt', 'w') as f:
+                    f.write(self.channel_log[ch])
+        
 
 
 # bot = bank()
-# bot.add_user('야스')
+# bot.add_user('책스쵸코')
 # bot.add_user('잭스')
 # print(bot.bank_data)
 # bot.manage('이누', 100)
