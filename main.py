@@ -7,7 +7,7 @@ from datetime import datetime
 class bank:
     
     def __init__(self):
-        print("초기 설정 완료")
+        # print("초기 설정 완료")
         self.log = dict()
         self.log['server_log'] = list()
         self.data = dict()
@@ -29,7 +29,7 @@ class bank:
     def add_user(self, user):
         try:
             if self.data[user][0] != -1:
-                print("이미 존제하는 유저입니다.")
+                print("이미 존재하는 유저입니다.")
                 return 1
 
             elif self.data[user][0] == -1:
@@ -45,7 +45,7 @@ class bank:
     def manage(self, user, money):
         try:
             if self.data[user][0] != -1:
-                print(f"{user} 한테서 {money} 추가했습니다.")
+                print(f"{user} 님으로부터 {money} 추가했습니다.")
                 self.data[user][0] += int(money)
                 return 0
             
@@ -121,7 +121,6 @@ class bank:
             self.data[user_id] = [-1, 0, str(datetime.today().strftime("%Y/%m/%d")), 1]
             return 0
 
-
     def cheack(self, user):
         return self.data[user][0]
 
@@ -140,11 +139,17 @@ class bank:
         with open('log.json', 'w', encoding='UTF-8-sig') as f:
             f.write(json.dumps(self.log, ensure_ascii=False, indent=4))
         
-            
-    
+    def conversion(self):
+        for filename in self.log.keys():
+            txt = ''
+
+            for log in self.log[filename]:
+                txt += log
+
+            with open(f'{filename}.txt', 'w', encoding='UTF-8-sig') as f:
+                f.write(txt)
         
-
-
+    
 # bot = bank()
 # bot.add_user('책스쵸코')
 # bot.add_user('잭스')
@@ -152,8 +157,3 @@ class bank:
 # bot.manage('이누', 100)
 # print(bot.bank_data)
 # bot.attend(10)
-
-
-
-
-
