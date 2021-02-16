@@ -3,7 +3,7 @@ from datetime import datetime
 from main import bank
 from discord.ext import commands 
 
-app = commands.Bot(command_prefix='!!') 
+app = commands.Bot(command_prefix='>') 
 bot = bank()
 items = dict()
 items = { 1 : '경고 1회 차감권', 2 : '[고인물](칭호)', 3 : '[흑우](칭호)', 4 : '[대마법사](칭호)', 5 : '[RMT],[EMT],[PMT](칭호, 택1)', 6 : '[쇼타콘],[로리콘],[중2병](칭호, 택1)', 7 : '[얀데레].[츤데레],[도짓코](칭호, 택1)', 8 : '[페이몬],[혐],[비밀친구](칭호, 택1)', 9 : '[뉴비](칭호)', 10 : '[덕후](칭호)'}
@@ -26,7 +26,7 @@ async def on_message(message):
         return
 
     msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : {message.content}' + '\n'
-    bot.channel_log_add(str(message.channel) ,msg)
+    bot.log_channel_add(str(message.channel) ,msg)
     # print(msg)
 
 #####################################################################################################
@@ -47,7 +47,7 @@ async def 관리(t, *, name_money):
         await t.send('존제하지 않는 유저입니다.') 
 
     else:
-        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
         await t.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 추가했습니다.') 
 
 @관리.error
@@ -68,7 +68,7 @@ async def 만들기(message):
         await  message.channel.send(f'{name} 님 이미 계좌가 있습니다.')
 
     else:
-        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님 계좌를 추가했습니다')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님 계좌를 추가했습니다')
         await message.channel.send(f'{name} 님의 계좌를 추가했습니다.') 
 
 #####################################################################################################
@@ -80,8 +80,7 @@ async def 저장(t):
     await t.send('데이터 저장 완료!')
     bot.log_save()
     await t.send('로그 저장 완료!')
-    bot.channel_log_save()
-    await t.send('채널 로그 저장 완료!')
+
 
 @저장.error
 async def 저장_error(t, err):
@@ -127,7 +126,7 @@ async def 구매(message):
     if ch == 1:
         await channel.send('돈이 부족합니다.') 
     elif ch == 0:
-        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {user_id} 님이  {items[item_num]} 을 구메 하셨습니다.')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {user_id} 님이  {items[item_num]} 을 구메 하셨습니다.')
         print(f'{user_id}님이 {items[item_num]} 을 구메 하셨습니다.')
         await channel.send(f'{user_id}님이 {items[item_num]} 을 구메 하셨습니다.') 
 
@@ -139,12 +138,12 @@ async def 출책(message):
     channel = message.channel
     ch = bot.attend(name)
     if ch == 0:
-        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다.')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다.')
         print(f'<@!{message.author.id}> 출석')
         await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다.') 
 
     elif ch == 2:
-        bot.log_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다. 5코인 추가 되었습니다.')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님이 출석했습니다. 5코인 추가 되었습니다.')
         print(f'<@!{message.author.id}> 출석')
         await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다. 5코인 추가 되었습니다.') 
     

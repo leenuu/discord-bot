@@ -9,7 +9,7 @@ class bank:
     def __init__(self):
         print("초기 설정 완료")
         self.log = dict()
-        self.log['server_log'] = []
+        self.log['server_log'] = list()
         self.data = dict()
         self.price = {1 : 1000, 2 : 800, 3 : 600, 4 : 550, 5 : 500, 6 : 400, 7 : 350, 8 : 300, 9 : 100, 10 : 50}
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
@@ -78,6 +78,14 @@ class bank:
                 break
             
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
+
+        try: 
+            with open('log.json', 'r', encoding='UTF-8-sig') as f:
+                self.log = json.load(f)
+
+        except FileNotFoundError:
+            pass
+
     
     def buy(self, user_id, item):
         if self.data[user_id][0] < self.price[item]:
@@ -119,41 +127,20 @@ class bank:
 
     def log_server_add(self, log_data):
         self.log['server_log'].append(log_data + '\n')
-    
-    def log_server_save(self):
-        try: 
-            with open("log.json", 'r') as f:
-                _log = f.read()
-                self.log = _log + self.log
-            
-            with open("log.txt", "w") as f:
-                f.write(self.log)
-                
-        except FileNotFoundError:
-            with open("log.txt", 'w'):
-                pass
-e
-    def channel_log_add(self, ch, msg):
 
+    def log_channel_add(self, ch, msg):
         try:
             self.log[ch].append(msg)
             
         except KeyError:
-            self.log[ch] = []
+            self.log[ch] = list()
             self.log[ch].append(msg)
 
-
-    def channel_log_save(self):
-        for ch in self.channel_log.keys():
-            try: 
-                with open(f'{ch}.txt', 'r') as f:
-                    f.write(self.channel_log[ch])
+    def log_save(self):
+        with open('log.json', 'w', encoding='UTF-8-sig') as f:
+            f.write(json.dumps(self.log, ensure_ascii=False, indent=4))
+        
             
-            except FileNotFoundError:
-                with open(f'{ch}.txt', 'w') as f:
-                    f.write(self.channel_log[ch])
-    
-
     
         
 
