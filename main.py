@@ -1,13 +1,15 @@
 import pandas as pd
 import openpyxl
+import json
 from datetime import datetime
+
 
 class bank:
     
     def __init__(self):
         print("초기 설정 완료")
-        self.log = ''
-        self.channel_log = dict()
+        self.log = dict()
+        self.log['server_log'] = []
         self.data = dict()
         self.price = {1 : 1000, 2 : 800, 3 : 600, 4 : 550, 5 : 500, 6 : 400, 7 : 350, 8 : 300, 9 : 100, 10 : 50}
         self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
@@ -115,12 +117,12 @@ class bank:
     def cheack(self, user):
         return self.data[user][0]
 
-    def log_add(self, log_data):
-        self.log += log_data + '\n'
+    def log_server_add(self, log_data):
+        self.log['server_log'].append(log_data + '\n')
     
-    def log_save(self):
+    def log_server_save(self):
         try: 
-            with open("log.txt", 'r'):
+            with open("log.json", 'r') as f:
                 _log = f.read()
                 self.log = _log + self.log
             
@@ -130,25 +132,29 @@ class bank:
         except FileNotFoundError:
             with open("log.txt", 'w'):
                 pass
-
+e
     def channel_log_add(self, ch, msg):
 
         try:
-            self.channel_log[ch] += msg 
+            self.log[ch].append(msg)
             
         except KeyError:
-            self.channel_log[ch] = msg
+            self.log[ch] = []
+            self.log[ch].append(msg)
 
 
     def channel_log_save(self):
         for ch in self.channel_log.keys():
             try: 
-                with open(f'{ch}.txt', 'a') as f:
+                with open(f'{ch}.txt', 'r') as f:
                     f.write(self.channel_log[ch])
             
             except FileNotFoundError:
                 with open(f'{ch}.txt', 'w') as f:
                     f.write(self.channel_log[ch])
+    
+
+    
         
 
 
