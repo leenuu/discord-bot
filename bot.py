@@ -56,15 +56,19 @@ async def 설정(message):
 #####################################################################################################
 @app.command() 
 @commands.has_role("은행원")
-async def 관리(t, *, name_money): 
-    name = name_money.split(' ')[0]
-    money = name_money.split(' ')[1]
+async def 관리(message): 
+    # print(message.message.content)
+
+    ur = f'<@!{message.author.id}>'
+    name = message.message.content.split(' ')[1]
+    money = message.message.content.split(' ')[2]
     if bot.manage(name, money) == 1:
-        await t.send('존재하지 않는 유저입니다.') 
+        await message.channel.send('존재하지 않는 유저입니다.') 
 
     else:
-        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
-        await t.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 추가했습니다.') 
+        # print(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {ur}님이 {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
+        bot.log_server_add(f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} log: {ur}님이 {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
+        await message.channel.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 추가했습니다.') 
 
 @관리.error
 async def 관리_error(t, err):
