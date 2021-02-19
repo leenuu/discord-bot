@@ -1,4 +1,3 @@
-import pandas as pd
 import openpyxl
 import json
 from datetime import datetime
@@ -12,7 +11,6 @@ class bank:
         self.log['server_log'] = list()
         self.data = dict()
         self.price = {1 : 1000, 2 : 800, 3 : 600, 4 : 550, 5 : 500, 6 : 400, 7 : 350, 8 : 300, 9 : 100, 10 : 50}
-        self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
         
         try:    
             self.files = openpyxl.load_workbook('data.xlsx')
@@ -76,9 +74,7 @@ class bank:
 
             else:
                 break
-            
-        self.bank_data = pd.Series([self.data.keys(),self.data.values()], index = ['name', 'inform'])
-
+        
         try: 
             with open('log.json', 'r', encoding='UTF-8-sig') as f:
                 self.log = json.load(f)
