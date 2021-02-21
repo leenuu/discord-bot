@@ -10,6 +10,7 @@ items = { 1 : '경고 1회 차감권', 2 : '[고인물](칭호)', 3 : '[흑우](
 base_ch = ''
 
 #####################################################################################################
+
 @app.event 
 async def on_ready(): 
     print(app.user.name, 'has connected to Discord!') 
@@ -54,6 +55,7 @@ async def 설정(message):
     await base_ch.send('설정 완료!')
 
 #####################################################################################################
+
 @app.command() 
 @commands.has_role("은행원")
 async def 관리(message): 
@@ -81,7 +83,7 @@ async def 관리_error(t, err):
 #####################################################################################################
 
 @app.command() 
-@commands.has_any_role("은행 고객원", "은행원")
+@commands.has_any_role("은행 고객님", "은행원")
 async def 만들기(message):
     name = f'<@!{message.author.id}>'
     if bot.add_user(name) == 1:
@@ -136,10 +138,13 @@ async def 유저확인_error(t, err):
 #####################################################################################################
 
 @app.command() 
-@commands.has_any_role("은행 고객원", "은행원")
+@commands.has_any_role("은행 고객님", "은행원")
 async def 코인확인(message): 
     name = f'<@!{message.author.id}>'
-    await message.channel.send(f'{name}님의 현재 덕후 코인은 {bot.cheack(name)} :coin: 입니다.')
+    if bot.cheack(name) == -1:
+        await message.channel.send(f'{name}님의 현재 계좌가 없습니다.')
+    else:
+        await message.channel.send(f'{name}님의 현재 덕후 코인은 {bot.cheack(name)} :coin: 입니다.')
 
 @코인확인.error
 async def 코인확인_err(t, err):
@@ -149,7 +154,7 @@ async def 코인확인_err(t, err):
 #####################################################################################################
 
 @app.command() 
-@commands.has_any_role("은행원" , "은행 고객원")
+@commands.has_any_role("은행원" , "은행 고객님")
 async def 구매(message):
     user_id = f'<@!{message.author.id}>'
     item_num = int(message.message.content.split(' ')[1])
@@ -203,7 +208,7 @@ async def test(message):
 #####################################################################################################
 
 @app.command() 
-@commands.has_any_role("은행원" , "은행 고객원")
+@commands.has_any_role("은행원" , "은행 고객님")
 async def 상점품목(t):
     embed = discord.Embed(title="덕후 은행 상점", description="덕후 코인으로 살 수 있는 품목 입니다.", color=0x62c1cc)
     embed.add_field(name=">1 경고 1회 차감권 ", value="1000 코인", inline=True)
@@ -221,7 +226,7 @@ async def 상점품목(t):
 #####################################################################################################
 
 @app.command() 
-@commands.has_any_role("은행원" , "은행 고객원")
+@commands.has_any_role("은행원" , "은행 고객님")
 async def 도움(t):
     embed = discord.Embed(title="덕후 은행", description="디스코드 덕후 코인봇 입니다.", color=0x62c1cc)
     embed.add_field(name=">출첵 ", value="출석 체크를 합니다.", inline=False)
