@@ -64,6 +64,12 @@ async def 관리(message):
     ur = f'<@!{message.author.id}>'
     name = message.message.content.split(' ')[1]
     money = message.message.content.split(' ')[2]
+
+    if '!' not in name:
+        name = f'<@!{name[2:len(name)-1]}>'
+    #     print(name)
+
+    # print(ur, name, money) 
     if bot.manage(name, money) == 1:
         await message.channel.send('존재하지 않는 유저입니다.') 
 
