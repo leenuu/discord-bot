@@ -38,7 +38,8 @@ async def on_message(message):
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-agent', str(ua.chrome))]
         urllib.request.install_opener(opener)
-        urllib.request.urlretrieve(message.attachments[0].url,f'img/{str(datetime.today().strftime("%Y %m %d %H %M %S"))} {message.author.id} {message.attachments[0].filename}')
+        for urls in message.attachments:
+            urllib.request.urlretrieve(urls.url,f'img/{str(datetime.today().strftime("%Y %m %d %H %M %S"))} {message.author.id} {urls.filename}')
 
         msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))}-{message.author.id}-{message.attachments[0].filename} ' + '\n'
         bot.log_channel_add(str(message.channel) ,msg)
@@ -273,7 +274,5 @@ async def 관리도움(t):
     await t.send(embed=embed)
 
 #####################################################################################################
-
-
 
 app.run('')
