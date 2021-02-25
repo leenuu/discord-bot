@@ -1,5 +1,7 @@
 import discord 
 from datetime import datetime
+import urllib.request
+from fake_useragent import UserAgent
 from main import bank
 from discord.ext import commands 
 
@@ -20,16 +22,32 @@ async def on_ready():
 
 #####################################################################################################
 
+
+
 @app.event 
 async def on_message(message): 
+    # print(message.attachments[0].filename)  
+    # print(message.attachments[0].url)
+    
     await app.process_commands(message)
     if message.author == app.user:
         return
 
-    msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : {message.content}' + '\n'
-    bot.log_channel_add(str(message.channel) ,msg)
-    # print(msg)
+    try:
+        ua = UserAgent()
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', str(ua.chrome))]
+        urllib.request.install_opener(opener)
+        urllib.request.urlretrieve(message.attachments[0].url,f'img/{str(datetime.today().strftime("%Y %m %d %H %M %S"))} {message.author.id} {message.attachments[0].filename}')
 
+        msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))}-{message.author.id}-{message.attachments[0].filename} ' + '\n'
+        bot.log_channel_add(str(message.channel) ,msg)
+
+    except IndexError:
+        msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}"' + '\n'
+        bot.log_channel_add(str(message.channel) ,msg)
+        # print(msg)
+    
 #####################################################################################################
 
 @app.command() 
