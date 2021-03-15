@@ -22,17 +22,7 @@ async def on_ready():
 
 #####################################################################################################
 
-
-
-@app.event 
-async def on_message(message): 
-    # print(message.attachments[0].filename)  
-    # print(message.attachments[0].url)
-    
-    await app.process_commands(message)
-    if message.author == app.user:
-        return
-
+async def logs(message):
     try:
         ua = UserAgent()
         opener = urllib.request.build_opener()
@@ -48,7 +38,22 @@ async def on_message(message):
         msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}"' + '\n'
         bot.log_channel_add(str(message.channel) ,msg)
         # print(msg)
+    # print(msg)
+    # return msg
     
+@app.event 
+async def on_message(message): 
+    # print(message.attachments[0].filename)  
+    # print(message.attachments[0].url)
+    
+    await app.process_commands(message)
+    # if message.author == app.user:
+    #     return
+    await logs(message)
+    return
+    #bot.log_channel_add(str(message.channel) ,msg)
+
+
 #####################################################################################################
 
 @app.command() 
@@ -258,6 +263,7 @@ async def 도움(t):
     embed.add_field(name=">출첵확인 ", value="출석 체크한 횟수를 보여줍니다.", inline=False)
     embed.add_field(name=">만들기 ", value="덕후 코인을 할당받는 계좌를 만듭니다.", inline=False)
     embed.add_field(name=">코인확인 ", value="유저의 현재 소지하는 덕후 코인을 확인합니다.", inline=False)
+    embed.add_field(name="> ", value="유저의 현재 소지하는 덕후 코인을 확인합니다.", inline=False)
     await t.send(embed=embed)
 
 #####################################################################################################
@@ -266,11 +272,12 @@ async def 도움(t):
 @commands.has_role("은행원")
 async def 관리도움(t):
     embed = discord.Embed(title="덕후 은행", description="디스코드 덕후 코인봇 입니다.", color=0x62c1cc)
-    embed.add_field(name=">관리 (유저멘션) (추가 또는 빼고 싶은 만큼의 돈)", value="멘션한 유저의 돈을 더하거나 뺍니다.", inline=False)
-    embed.add_field(name=">저장", value="정보를 저장합니다.", inline=False)
-    embed.add_field(name=">유저확인 (유저멘션)", value="유저의 ID값을 가져옵니다.", inline=False)
-    embed.add_field(name=">이름확인 (id)", value="유저의 ID값으로 유저이름을 알려줍니다. (멘션됨).", inline=False)
-    embed.add_field(name=">변환", value="텍스트 파일로 로그를 출력 합니다.", inline=False)
+    embed.add_field(name=">관리 (유저멘션) (추가 또는 빼고 싶은 만큼의 돈) ", value="멘션한 유저의 돈을 더하거나 뺍니다.", inline=False)
+    embed.add_field(name=">저장 ", value="정보를 저장합니다.", inline=False)
+    embed.add_field(name=">유저확인 (유저멘션) ", value="유저의 ID값을 가져옵니다.", inline=False)
+    embed.add_field(name=">이름확인 (id) ", value="유저의 ID값으로 유저이름을 알려줍니다. (멘션됨).", inline=False)
+    embed.add_field(name=">변환 ", value="텍스트 파일로 로그를 출력 합니다.", inline=False)
+    embed.add_field(name=">상점품목 ", value="덕후 코인으로 살 수 있는 품목을 보여줌니다.", inline=False)
     await t.send(embed=embed)
 
 #####################################################################################################
