@@ -30,8 +30,9 @@ async def logs(message):
         urllib.request.install_opener(opener)
         for urls in message.attachments:
             urllib.request.urlretrieve(urls.url,f'img/{str(datetime.today().strftime("%Y %m %d %H %M %S"))} {message.author.id} {urls.filename}')
+            msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))}-{message.author.id}-{urls.filename} ' + '\n'
 
-        msg = f'{str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))}-{message.author.id}-{message.attachments[0].filename} ' + '\n'
+        
         bot.log_channel_add(str(message.channel) ,msg)
 
     except IndexError:
@@ -89,7 +90,7 @@ async def 관리(message):
     name = message.message.content.split(' ')[1]
     money = message.message.content.split(' ')[2]
 
-    if '!' not in name:
+    if '!' not in name:     
         name = f'<@!{name[2:len(name)-1]}>'
     #     print(name)
 
@@ -282,4 +283,4 @@ async def 관리도움(t):
 
 #####################################################################################################
 
-app.run('')
+app.run('ODA1MDI4MjMzOTIxNDI5NTc0.YBU69w.iG82EbHOxzdfOoM49UXGjLEWanI')
