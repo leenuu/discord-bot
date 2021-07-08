@@ -22,15 +22,16 @@ async def logs(message):
     opener.addheaders = [('User-agent', str(ua.chrome))]
     urllib.request.install_opener(opener)
     user = f'<@!{message.author.id}>'
+    date = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     if message.attachments == []:
-        msg = f'{str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}"' + '\n'
+        msg = f'{date} <{message.channel}> <{message.author.id}> : msg "{message.content}"' + '\n'
         bot.log_channel_user_add(str(message.channel) ,msg, user)
 
     else:
         for urls in message.attachments:
-            urllib.request.urlretrieve(urls.url,f'img/{str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))}-{message.author.id}-{urls.filename}')
+            urllib.request.urlretrieve(urls.url,f'img/{date}-{message.author.id}-{urls.filename}')
 
-            msg = f'{str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))}-{message.author.id}-{message.attachments.filename} ' + '\n'
+            msg = f'{date} <{message.channel}> <{message.author.id}> : msg "{message.content}" , img {date}-{message.author.id}-{message.attachments.filename} ' + '\n'
             bot.log_channel_user_add(str(message.channel) ,msg, user)
         
         
@@ -63,6 +64,7 @@ async def 관리(message):
     user = f'<@!{message.author.id}>'
     name = message.message.content.split(' ')[1]
     money = int(message.message.content.split(' ')[2])
+    date = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
     if '!' not in name:
         name = f'<@!{name[2:len(name)-1]}>'
@@ -71,7 +73,7 @@ async def 관리(message):
         await message.channel.send('존재하지 않는 유저입니다.') 
 
     else:
-        bot.log_server_add(f'{str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))} log: {user}님이 {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
+        bot.log_server_add(f'{date} log: {user}님이 {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
         await message.channel.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 추가했습니다.') 
 
 @관리.error
@@ -81,6 +83,19 @@ async def 관리_error(t, err):
     if isinstance(err, commands.CommandInvokeError):
         await t.send('명령어를 다시 확인해주세요.') 
 
+@app.command() 
+@commands.has_any_role("은행 고객님", "은행원")
+async def 코인확인(message): 
+    name = f'<@!{message.author.id}>'
+    if bot.cheack(name) == -1:
+        await message.channel.send(f'{name}님의 현재 계좌가 없습니다.')
+    else:
+        await message.channel.send(f'{name}님의 현재 덕후 코인은 {bot.cheack(name)} :coin: 입니다.')
+
+@코인확인.error
+async def 코인확인_err(t, err):
+    if isinstance(err,commands.CommandInvokeError):
+        await t.send('존재하지 않는 유저입니다.') 
 
 @app.command() 
 @commands.has_any_role("은행원" , "은행 고객님")
@@ -89,21 +104,48 @@ async def 구매(message):
     item_num = int(message.message.content.split(' ')[1])
     ch = bot.buy(user_id, item_num)
     channel = message.channel
+    date = str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))
     if ch == 1:
         await channel.send(f'{user_id}님 돈이 부족합니다.') 
 
     elif ch == 0:
-        bot.log_server_add(f'{str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))} log: {user_id} 님이  {items[item_num]} 을 구매 하셨습니다.')
+        bot.log_server_add(f'{date} log: {user_id} 님이  {items[item_num]} 을 구매 하셨습니다.')
         await channel.send(f'{user_id}님이 {items[item_num]} 을 구매 하셨습니다.')
 
     elif ch == -1:
         await channel.send(f'{user_id}님의 계좌가 존재하지 않습니다.')
 
-@구매.error
-async def 구매_error(t, err):
-    if isinstance(err, commands.CommandInvokeError):
-        await t.send('명령어를 다시 확인해주세요.') 
+# @구매.error
+# async def 구매_error(t, err):
+#     if isinstance(err, commands.CommandInvokeError):
+#         await t.send('명령어를 다시 확인해주세요.') 
 
+
+@app.command()
+async def 출첵(message):
+    name = f'<@!{message.author.id}>'
+    channel = message.channel
+    ch = bot.attend(name)
+    date = str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))
+    if ch == 0:
+        bot.log_server_add(f'{date} log: {name} 님이 출석했습니다.')
+        print(f'<@!{message.author.id}> 출석')
+        await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다.') 
+
+    elif ch == 1:
+        bot.log_server_add(f'{date} log: {name} 님이 출석했습니다. 10코인 추가 되었습니다.')
+        print(f'<@!{message.author.id}> 출석')
+        await channel.send(f'{name}님 출석! {bot.data[name][3]}회 출석했습니다. 10코인 추가 되었습니다.') 
+        
+    elif ch == 2:
+        print('이미 출석했습니다.')
+        await channel.send(f'{name}님 이미 출석했습니다.')
+
+@app.command() 
+async def 출첵확인(message):
+    name = f'<@!{message.author.id}>'
+    channel = message.channel
+    await channel.send(f'{name} 님 출석횟수는 {bot.data[name][3]} 입니다.') 
 
 @app.command() 
 @commands.has_role("은행원")
@@ -118,6 +160,35 @@ async def 저장_error(t, err):
     if isinstance(err, commands.MissingRole):
         await t.send('당신은 권한이 없습니다.') 
         
+
+
+@app.command() 
+@commands.has_role("은행원")
+async def 유저확인(t, *, ur): 
+    name = ur.replace("<@!", "").replace(">", "")
+    await t.send(name)
+
+@유저확인.error
+async def 유저확인_error(t, err):
+    if isinstance(err, commands.MissingRole):
+        await t.send('당신은 권한이 없습니다.') 
+
+@app.command() 
+@commands.has_role("은행원")
+async def 이름확인(message): 
+    name = f'<@!{message.author.id}>'
+    await message.channel.send(name)
+
+@app.command() 
+@commands.has_role("은행원")
+async def 변환(t): 
+    bot.conversion()
+    await t.send('변환 완료!')
+
+@변환.error
+async def 변환_error(t, err):
+    if isinstance(err, commands.MissingRole):
+        await t.send('당신은 권한이 없습니다.') 
 
 @app.command() 
 @commands.has_any_role("은행원" , "은행 고객님")
@@ -144,7 +215,6 @@ async def 도움(t):
     embed.add_field(name=">출첵확인 ", value="출석 체크한 횟수를 보여줍니다.", inline=False)
     embed.add_field(name=">만들기 ", value="덕후 코인을 할당받는 계좌를 만듭니다.", inline=False)
     embed.add_field(name=">코인확인 ", value="유저의 현재 소지하는 덕후 코인을 확인합니다.", inline=False)
-    embed.add_field(name="> ", value="유저의 현재 소지하는 덕후 코인을 확인합니다.", inline=False)
     await t.send(embed=embed)
 
 
