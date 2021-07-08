@@ -42,6 +42,8 @@ class bank:
         try:
             if self.data[user][0] >= self.goods[i_num]:
                 self.data[user][0] = self.data[user][0] - self.goods[i_num]
+                if i_num == 1:
+                    self.data[user][1] += 1
                 return 0
             
             else:
@@ -49,6 +51,31 @@ class bank:
 
         except KeyError:
             return -1
+
+    def cheack(self, user):
+        return self.data[user][0]
+
+    def attend(self, user_id):
+        # try:
+        if self.data[user_id][2] == str(datetime.today().strftime("%Y/%m/%d")):
+            print('이미 출석 했습니다')
+            return 2
+
+        elif self.data[user_id][2] != str(datetime.today().strftime("%Y/%m/%d")):
+            self.data[user_id][2] = str(datetime.today().strftime("%Y/%m/%d"))
+            self.data[user_id][3] += 1
+            print(str(datetime.today().strftime("%Y/%m/%d")))
+            if self.data[user_id][0] != -1:
+                self.data[user_id][0] += 10
+                print('10코인 추가.')
+                return 1
+                    
+            return 0
+
+        # except KeyError:
+        #     print('없는 유저 입니다.')
+        #     self.data[user_id] = [-1, 0, 1,str(datetime.today().strftime("%Y/%m/%d")), str(datetime.today().strftime("%Y/%m/%d")),0]
+        #     return 0
 
     def save_data(self):
         for i in range(0, len(self.data)): 
@@ -62,7 +89,14 @@ class bank:
         num = 1
         while True:
             if self.xlsx.cell(row=num+1, column=1).value != None:
-                self.data[self.xlsx.cell(row=num+1, column=1).value] = [self.xlsx.cell(row=num+1, column=2).value, self.xlsx.cell(row=num+1, column=3).value,self.xlsx.cell(row=num+1, column=4).value, self.xlsx.cell(row=num+1, column=5).value, self.xlsx.cell(row=num+1, column=6).value, self.xlsx.cell(row=num+1, column=7).value]
+                user = self.xlsx.cell(row=num+1, column=1).value
+                coin = int(self.xlsx.cell(row=num+1, column=2).value)
+                warning_down = int(self.xlsx.cell(row=num+1, column=3).value)
+                att_date = self.xlsx.cell(row=num+1, column=4).value
+                att_count = int(self.xlsx.cell(row=num+1, column=5).value)
+                first_ac = self.xlsx.cell(row=num+1, column=6).value
+                chat_count = int(self.xlsx.cell(row=num+1, column=7).value)
+                self.data[user] = [coin, warning_down, att_date, att_count, first_ac, chat_count]
                 num += 1
 
             else:
@@ -108,4 +142,3 @@ class bank:
 
 
 # bot = bank()
-    
