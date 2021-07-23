@@ -85,6 +85,7 @@ async def 관리_error(t, err):
     if isinstance(err, commands.CommandInvokeError):
         await t.send('명령어를 다시 확인해주세요.') 
 
+
 @app.command() 
 @commands.has_any_role("은행 고객님", "은행원")
 async def 코인확인(message): 
@@ -98,6 +99,14 @@ async def 코인확인(message):
 async def 코인확인_err(t, err):
     if isinstance(err,commands.CommandInvokeError):
         await t.send('존재하지 않는 유저입니다.') 
+
+
+@app.command() 
+@commands.has_role("은행원")
+async def 유저코인확인(t, *, ur): 
+    name = ur
+    await t.send(bot.data[name][0])
+
 
 @app.command() 
 @commands.has_any_role("은행원" , "은행 고객님")
@@ -122,12 +131,22 @@ async def 구매(message):
 #     if isinstance(err, commands.CommandInvokeError):
 #         await t.send('명령어를 다시 확인해주세요.') 
 
+
 @app.command()
 async def 접률확인(message):
     name = f'<@!{message.author.id}>'
     channel = message.channel
     ac_rate = bot.user_access_rate(name)
     await channel.send(f'{name}님의 접속률은 {ac_rate} 입니다.')
+
+
+@app.command() 
+@commands.has_role("은행원")
+async def 유저접률확인(t, *, ur): 
+    name = ur
+    ac_rate = bot.user_access_rate(name)
+    await t.send(f'{name}님의 접속률은 {ac_rate} 입니다.')
+
 
 @app.command()
 async def 출첵(message):
@@ -149,11 +168,13 @@ async def 출첵(message):
         print('이미 출석했습니다.')
         await channel.send(f'{name}님 이미 출석했습니다.')
 
+
 @app.command() 
 async def 출첵확인(message):
     name = f'<@!{message.author.id}>'
     channel = message.channel
     await channel.send(f'{name} 님 출석횟수는 {bot.data[name][3]} 입니다.') 
+
 
 @app.command() 
 @commands.has_role("은행원")
@@ -167,7 +188,8 @@ async def 저장(t):
 async def 저장_error(t, err):
     if isinstance(err, commands.MissingRole):
         await t.send('당신은 권한이 없습니다.') 
-        
+
+
 @app.command() 
 @commands.has_role("은행원")
 async def 유저확인(t, *, ur): 
@@ -179,11 +201,13 @@ async def 유저확인_error(t, err):
     if isinstance(err, commands.MissingRole):
         await t.send('당신은 권한이 없습니다.') 
 
+
 @app.command() 
 @commands.has_role("은행원")
 async def 이름확인(message): 
     name = f'<@!{message.author.id}>'
     await message.channel.send(name)
+
 
 @app.command() 
 @commands.has_role("은행원")
@@ -195,6 +219,7 @@ async def 변환(t):
 async def 변환_error(t, err):
     if isinstance(err, commands.MissingRole):
         await t.send('당신은 권한이 없습니다.') 
+
 
 @app.command() 
 @commands.has_any_role("은행원" , "은행 고객님")
@@ -221,6 +246,7 @@ async def 도움(t):
     embed.add_field(name=">출첵확인 ", value="출석 체크한 횟수를 보여줍니다.", inline=False)
     embed.add_field(name=">만들기 ", value="덕후 코인을 할당받는 계좌를 만듭니다.", inline=False)
     embed.add_field(name=">코인확인 ", value="유저의 현재 소지하는 덕후 코인을 확인합니다.", inline=False)
+    embed.add_field(name=">접률확인 ", value="유저의 접률을 확인 합니다.", inline=False)
     await t.send(embed=embed)
 
 
@@ -229,6 +255,8 @@ async def 도움(t):
 async def 관리도움(t):
     embed = discord.Embed(title="덕후 은행", description="디스코드 덕후 코인봇 입니다.", color=0x62c1cc)
     embed.add_field(name=">관리 (유저멘션) (추가 또는 빼고 싶은 만큼의 돈) ", value="멘션한 유저의 돈을 더하거나 뺍니다.", inline=False)
+    embed.add_field(name=">유저코인확인 (유저멘션) ", value="유저의 코인을 보여줌니다", inline=False)
+    embed.add_field(name=">유저접률확인 (유저멘션) ", value="유저의 접률을 확인 합니다.", inline=False)
     embed.add_field(name=">저장 ", value="정보를 저장합니다.", inline=False)
     embed.add_field(name=">유저확인 (유저멘션) ", value="유저의 ID값을 가져옵니다.", inline=False)
     embed.add_field(name=">이름확인 (id) ", value="유저의 ID값으로 유저이름을 알려줍니다. (멘션됨).", inline=False)
