@@ -22,6 +22,8 @@ async def logs(message):
     opener.addheaders = [('User-agent', str(ua.chrome))]
     urllib.request.install_opener(opener)
     user = f'<@!{message.author.id}>'
+    if user == '<@!810545674436214835>':
+        return
     date = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     if message.attachments == []:
         msg = f'{date} <{message.channel}> <{message.author.id}> : msg "{message.content}"' + '\n'
@@ -73,8 +75,8 @@ async def 관리(message):
         await message.channel.send('존재하지 않는 유저입니다.') 
 
     else:
-        bot.log_server_add(f'{date} log: {user}님이 {name} 님의 덕후 코인을 {money}만큼 추가했습니다')
-        await message.channel.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 추가했습니다.') 
+        bot.log_server_add(f'{date} log: {user}님이 {name} 님의 덕후 코인을 {money}만큼 변경했습니다')
+        await message.channel.send(f'{name} 님의 덕후 코인을 {money} :coin: 만큼 변경했습니다.') 
 
 @관리.error
 async def 관리_error(t, err):
@@ -104,7 +106,7 @@ async def 구매(message):
     item_num = int(message.message.content.split(' ')[1])
     ch = bot.buy(user_id, item_num)
     channel = message.channel
-    date = str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))
+    date = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     if ch == 1:
         await channel.send(f'{user_id}님 돈이 부족합니다.') 
 
@@ -120,13 +122,19 @@ async def 구매(message):
 #     if isinstance(err, commands.CommandInvokeError):
 #         await t.send('명령어를 다시 확인해주세요.') 
 
+@app.command()
+async def 접률확인(message):
+    name = f'<@!{message.author.id}>'
+    channel = message.channel
+    ac_rate = bot.user_access_rate(name)
+    await channel.send(f'{name}님의 접속률은 {ac_rate} 입니다.')
 
 @app.command()
 async def 출첵(message):
     name = f'<@!{message.author.id}>'
     channel = message.channel
     ch = bot.attend(name)
-    date = str(datetime.today().strftime("%Y/%m/%d %H:%M:%S"))
+    date = str(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     if ch == 0:
         bot.log_server_add(f'{date} log: {name} 님이 출석했습니다.')
         print(f'<@!{message.author.id}> 출석')
@@ -160,8 +168,6 @@ async def 저장_error(t, err):
     if isinstance(err, commands.MissingRole):
         await t.send('당신은 권한이 없습니다.') 
         
-
-
 @app.command() 
 @commands.has_role("은행원")
 async def 유저확인(t, *, ur): 
