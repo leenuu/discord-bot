@@ -57,14 +57,14 @@ class bank:
 
     def attend(self, user_id):
         # try:
-        if self.data[user_id][2] == str(datetime.today().strftime("%Y/%m/%d")):
+        if self.data[user_id][2] == str(datetime.today().strftime("%Y-%m-%d")):
             print('이미 출석 했습니다')
             return 2
 
-        elif self.data[user_id][2] != str(datetime.today().strftime("%Y/%m/%d")):
-            self.data[user_id][2] = str(datetime.today().strftime("%Y/%m/%d"))
+        elif self.data[user_id][2] != str(datetime.today().strftime("%Y-%m-%d")):
+            self.data[user_id][2] = str(datetime.today().strftime("%Y-%m-%d"))
             self.data[user_id][3] += 1
-            print(str(datetime.today().strftime("%Y/%m/%d")))
+            print(str(datetime.today().strftime("%Y-%m-%d")))
             if self.data[user_id][0] != -1:
                 self.data[user_id][0] += 10
                 print('10코인 추가.')
@@ -74,8 +74,23 @@ class bank:
 
         # except KeyError:
         #     print('없는 유저 입니다.')
-        #     self.data[user_id] = [-1, 0, 1,str(datetime.today().strftime("%Y/%m/%d")), str(datetime.today().strftime("%Y/%m/%d")),0]
+        #     self.data[user_id] = [-1, 0, 1,str(datetime.today().strftime("%Y-%m-%d")), str(datetime.today().strftime("%Y-%m-%d")),0]
         #     return 0
+
+    def user_access_rate(self, user):
+        sum = 0
+        user_chat_count = self.data[user][5]
+        user_attend_count = self.data[user][3]
+        user_first_ac = datetime(int(str(self.data[user][4]).split('-')[0]),int(str(self.data[user][4]).split('-')[1]),int(str(self.data[user][4]).split('-')[2][0:2]))
+        user_last_ac = datetime(int(str(self.data[user][2]).split('-')[0]),int(str(self.data[user][2]).split('-')[1]),int(str(self.data[user][2]).split('-')[2][0:2]))
+        user_member_since = int((user_last_ac - user_first_ac).days)
+
+        for us in self.data.keys():
+            sum += self.data[us][5]
+
+        access_rate = float(user_chat_count / sum) * float(user_attend_count / user_member_since) * 100
+        return access_rate
+
 
     def save_data(self):
         for i in range(0, len(self.data)): 
